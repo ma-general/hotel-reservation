@@ -27,16 +27,24 @@ public class ReservationService {
     }
 
     public boolean createReservation(Reservation reservation) {
+        Integer id = this.reservations.size() + 1;
+        reservation.setId(id);
         return reservations.add(reservation);
     }
 
-    public boolean updateReservation(Reservation reservation) {
-        if (reservations.contains(reservation)) {
-            reservations.remove(reservation);
-            reservations.add(reservation);
-            return true;
+    public boolean updateReservation(Reservation reservationUpdate) {
+        boolean result = false;
+
+        Optional<Reservation> oldReservation = reservations.stream()
+                .filter(r -> reservationUpdate.getId().equals(r.getId()))
+                .findFirst();
+
+        if (oldReservation.isPresent()) {
+            reservations.remove(oldReservation.get());
+            reservations.add(reservationUpdate);
+            result = true;
         }
-        return false;
+        return result;
     }
 
     @PreDestroy
